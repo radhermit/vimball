@@ -63,7 +63,10 @@ class Vimball:
             m = header.match(line)
             if m is not None:
                 filename = m.group(1)
-                filelines = int(self._file.readline().rstrip())
+                try:
+                    filelines = int(self._file.readline().rstrip())
+                except ValueError:
+                    raise SystemExit('Invalid vimball archive format')
                 filestart = self._file.tell()
                 yield (filename, filelines, filestart)
             line = self._file.readline()
