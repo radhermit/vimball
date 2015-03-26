@@ -13,8 +13,9 @@ from vimball.utils import mkdir_p
 
 
 class Vimball:
-    def __init__(self, filepath, extractdir=None):
+    def __init__(self, filepath, extractdir=None, verbose=False):
         self.filepath = filepath
+        self.verbose = verbose
 
         filebase, extension = os.path.splitext(filepath)
         try:
@@ -92,7 +93,8 @@ class Vimball:
             filepath = os.path.join(self.extractdir, filename)
             mkdir_p(os.path.dirname(filepath))
             with open(filepath, 'w') as f:
-                print(filepath)
+                if self.verbose:
+                    print(filepath)
                 self._file.seek(offset)
                 for i in xrange(lines):
                     f.write(self._file.readline())
@@ -102,15 +104,17 @@ def main():
     parser = argparse.ArgumentParser(description='vimball extractor', prog='vimball')
 
     parser.add_argument('archive', nargs=1)
-    parser.add_argument('-x', '--extract', help='extract files from a vimball archive',
-        action='store_true', dest='extract')
-    parser.add_argument('-l', '--list', help='list files a vimball archive',
-        action='store_true', dest='list')
-    parser.add_argument('-C', '--directory', help='extract files to a specified directory',
-        metavar='DIR', dest='extractdir')
+    parser.add_argument('-x', '--extract', action='store_true',
+        help='extract files from a vimball archive')
+    parser.add_argument('-l', '--list', action='store_true',
+        help='list files a vimball archive')
+    parser.add_argument('-v', '--verbose', action='store_true',
+        help='show files names when extracting an archive')
+    parser.add_argument('-C', '--directory', metavar='DIR', dest='extractdir',
+        help='extract files to a specified directory')
 
     args = parser.parse_args()
-    vimball = Vimball(args.archive[0], args.extractdir)
+    vimball = Vimball(args.archive[0], args.extractdir, args.verbose)
 
     if args.extract:
        vimball.extract()
