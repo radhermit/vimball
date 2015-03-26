@@ -111,14 +111,16 @@ def main():
     parser = argparse.ArgumentParser(description='vimball extractor', prog='vimball')
 
     parser.add_argument('archive', nargs=1)
-    parser.add_argument('-x', '--extract', action='store_true',
-        help='extract files from a vimball archive')
-    parser.add_argument('-l', '--list', action='store_true',
-        help='list files a vimball archive')
     parser.add_argument('-v', '--verbose', action='store_true',
         help='show files names when extracting an archive')
     parser.add_argument('-C', '--directory', metavar='DIR', dest='extractdir',
         help='extract files to a specified directory')
+
+    actions = parser.add_mutually_exclusive_group()
+    actions.add_argument('-x', '--extract', action='store_true',
+        help='extract files from a vimball archive')
+    actions.add_argument('-l', '--list', action='store_true',
+        help='list files a vimball archive')
 
     args = parser.parse_args()
     vimball = Vimball(args.archive[0], args.extractdir, args.verbose)
