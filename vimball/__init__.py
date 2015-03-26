@@ -95,9 +95,10 @@ class Vimball:
         for filename, lines, offset in self.files:
             filepath = os.path.join(self.extractdir, filename)
             try:
-                mkdir_p(os.path.dirname(filepath))
+                directory = os.path.dirname(filepath)
+                mkdir_p(directory)
             except OSError:
-                raise SystemExit('Failed creating extraction directory: {}'.format(self.filepath))
+                raise SystemExit('Failed creating directory: {}'.format(directory))
             with open(filepath, 'w') as f:
                 if self.verbose:
                     print(filepath)
