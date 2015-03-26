@@ -84,12 +84,12 @@ class Vimball:
                 raise SystemExit('No files were found in archive: {}'.format(self.filepath))
 
     def list(self):
-        for (filename, lines, offset) in self.files:
+        for filename, _lines, _offset in self.files:
             print(filename)
 
     def extract(self):
         self._file.seek(0)
-        for (filename, lines, offset) in self.files:
+        for filename, lines, offset in self.files:
             filepath = os.path.join(self.extractdir, filename)
             mkdir_p(os.path.dirname(filepath))
             with open(filepath, 'w') as f:
