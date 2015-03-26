@@ -103,7 +103,7 @@ class Vimball:
                 if self.verbose:
                     print(filepath)
                 self._file.seek(offset)
-                for i in xrange(lines):
+                for i in range(lines):
                     f.write(self._file.readline())
 
 
