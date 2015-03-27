@@ -1,6 +1,5 @@
 import argparse
 import bz2
-import errno
 import gzip
 import os
 import re
@@ -26,11 +25,10 @@ class Vimball:
             else:
                 self._file = open(filepath)
         except IOError:
-            print("That file doesn't exist!")
-            sys.exit(errno.ENOENT)
+            raise SystemExit("That file doesn't exist!")
 
         if not self._is_vimball():
-            raise TypeError
+            raise SystemExit('Invalid vimball archive format')
 
         if extractdir is None:
             extractdir = os.path.basename(filebase)
