@@ -125,7 +125,7 @@ def main():
     actions.add_argument('-x', '--extract', action='store_true',
         help='extract files from a vimball archive')
     actions.add_argument('-l', '--list', action='store_true',
-        help='list files a vimball archive')
+        help='list files in a vimball archive')
 
     args = parser.parse_args()
     vimball = Vimball(args.archive[0])
