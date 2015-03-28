@@ -28,15 +28,15 @@ class Vimball:
 
         filebase, extension = os.path.splitext(filepath)
         if extension == ".gz":
-            self._file = gzip.open(filepath)
+            self.fd = gzip.open(filepath)
         elif extension == ".bz2":
-            self._file = bz2.BZ2File(filepath)
+            self.fd = bz2.BZ2File(filepath)
         elif extension == ".xz":
-            self._file = lzma.open(filepath)
+            self.fd = lzma.open(filepath)
         else:
-            self._file = open(filepath)
+            self.fd = open(filepath)
 
-        if not is_vimball(self._file):
+        if not is_vimball(self.fd):
             raise SystemExit('Invalid vimball archive format')
 
         if extractdir is None:
@@ -48,7 +48,7 @@ class Vimball:
 
     def __del__(self):
         try:
-            self._file.close()
+            self.fd.close()
         except AttributeError:
             return
 
@@ -58,19 +58,19 @@ class Vimball:
         for header in (r"(.*)\t\[\[\[1\n", r"^(\d+)\n$"):
             header = re.compile(header)
             filename = None
-            self._file.seek(0)
-            line = self._file.readline()
+            self.fd.seek(0)
+            line = self.fd.readline()
             while line:
                 m = header.match(line)
                 if m is not None:
                     filename = m.group(1)
                     try:
-                        filelines = int(self._file.readline().rstrip())
+                        filelines = int(self.fd.readline().rstrip())
                     except ValueError:
                         raise SystemExit('Invalid vimball archive format')
-                    filestart = self._file.tell()
+                    filestart = self.fd.tell()
                     yield (filename, filelines, filestart)
-                line = self._file.readline()
+                line = self.fd.readline()
             if filename is not None:
                 break
 
@@ -79,7 +79,7 @@ class Vimball:
             print(filename)
 
     def extract(self):
-        self._file.seek(0)
+        self.fd.seek(0)
         for filename, lines, offset in self.files:
             filepath = os.path.join(self.extractdir, filename)
             try:
@@ -90,9 +90,9 @@ class Vimball:
             with open(filepath, 'w') as f:
                 if self.verbose:
                     print(filepath)
-                self._file.seek(offset)
+                self.fd.seek(offset)
                 for i in range(lines):
-                    f.write(self._file.readline())
+                    f.write(self.fd.readline())
 
 
 def main():
