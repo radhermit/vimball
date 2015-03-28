@@ -88,7 +88,9 @@ class Vimball:
 
     def extract(self, extractdir=None, verbose=False):
         if extractdir is None:
-            filebase, _extension = os.path.splitext(self.filepath)
+            filebase, extension = os.path.splitext(self.filepath)
+            if extension in ('.gz', '.bz2', '.xz'):
+                filebase, _extension = os.path.splitext(filebase)
             extractdir = os.path.basename(filebase)
             if os.path.exists(extractdir):
                 tempdir = tempfile.mkdtemp(prefix='vimball-', dir=os.getcwd())
