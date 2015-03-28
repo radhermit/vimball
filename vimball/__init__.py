@@ -8,7 +8,6 @@ import sys
 import tempfile
 
 from vimball._version import __version__
-from vimball.exceptions import NoFilesFound
 from vimball.utils import mkdir_p
 
 
@@ -56,36 +55,27 @@ class Vimball:
             return True
         return False
 
-    def _find_files(self, header):
-        filename = None
-        self._file.seek(0)
-        line = self._file.readline()
-        while line:
-            m = header.match(line)
-            if m is not None:
-                filename = m.group(1)
-                try:
-                    filelines = int(self._file.readline().rstrip())
-                except ValueError:
-                    raise SystemExit('Invalid vimball archive format')
-                filestart = self._file.tell()
-                yield (filename, filelines, filestart)
-            line = self._file.readline()
-
-        if filename is None:
-            raise NoFilesFound
-
     @property
     def files(self):
-        header = re.compile(r"(.*)\t\[\[\[1\n")
-        try:
-            return self._find_files(header)
-        except NoFilesFound:
-            header = re.compile(r"^(\d+)\n$")
-            try:
-                return self._find_files(header)
-            except NoFilesFound:
-                raise SystemExit('No files were found in archive: {}'.format(self.filepath))
+        # try new file header format first, then fallback on old
+        for header in (r"(.*)\t\[\[\[1\n", r"^(\d+)\n$"):
+            header = re.compile(header)
+            filename = None
+            self._file.seek(0)
+            line = self._file.readline()
+            while line:
+                m = header.match(line)
+                if m is not None:
+                    filename = m.group(1)
+                    try:
+                        filelines = int(self._file.readline().rstrip())
+                    except ValueError:
+                        raise SystemExit('Invalid vimball archive format')
+                    filestart = self._file.tell()
+                    yield (filename, filelines, filestart)
+                line = self._file.readline()
+            if filename is not None:
+                break
 
     def list(self):
         for filename, _lines, _offset in self.files:

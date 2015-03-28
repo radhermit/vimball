@@ -6,7 +6,6 @@ from mock import patch
 from pytest import raises
 
 from vimball import Vimball
-from vimball.exceptions import NoFilesFound
 
 
 def test_vimball():
@@ -41,5 +40,4 @@ def test_vimball():
         tmpfile.write('" Vimball Archiver')
         tmpfile.flush()
         v = Vimball(tmpfile.name)
-        with raises(NoFilesFound):
-            files = list(v.files)
+        assert list(v.files) == []
