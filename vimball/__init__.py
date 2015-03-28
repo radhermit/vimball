@@ -11,6 +11,13 @@ from vimball._version import __version__
 from vimball.utils import mkdir_p
 
 
+def is_vimball(fd):
+    fd.seek(0)
+    if re.match('^" Vimball Archiver', fd.readline()) is not None:
+        return True
+    return False
+
+
 class Vimball:
     def __init__(self, filepath, extractdir=None, verbose=False):
         if not os.path.exists(filepath):
@@ -29,7 +36,7 @@ class Vimball:
         else:
             self._file = open(filepath)
 
-        if not self.is_vimball(self._file):
+        if not is_vimball(self._file):
             raise SystemExit('Invalid vimball archive format')
 
         if extractdir is None:
@@ -44,16 +51,6 @@ class Vimball:
             self._file.close()
         except AttributeError:
             return
-
-    @staticmethod
-    def is_vimball(fd):
-        fd.seek(0)
-        header = fd.readline()
-        m = re.match('^" Vimball Archiver', header)
-
-        if m is not None:
-            return True
-        return False
 
     @property
     def files(self):
