@@ -40,7 +40,7 @@ with open('README.rst', 'r') as f:
 setup(
     name='vimball',
     version=__version__,
-    description='a vimball extractor',
+    description='a command-line vimball archive extractor',
     long_description=readme,
     author='Tim Harder',
     author_email='radhermit@gmail.com',
