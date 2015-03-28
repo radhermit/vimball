@@ -4,7 +4,7 @@ vimball
 
 vimball is a simple command-line tool for extracting vimball archives.
 
-For simple extractions use the following command::
+For extracting vimball archives use the following command::
 
     vimball -x <vimball archive>
 
