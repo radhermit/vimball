@@ -1,3 +1,5 @@
+|test| |coverage|
+
 =======
 vimball
 =======
@@ -17,3 +19,9 @@ or path may also be selected using the following::
 Listing the files contained inside the vimball archive is also supported using::
 
     vimball -l <vimball archive>
+
+
+.. |test| image:: https://travis-ci.org/radhermit/vimball.svg?branch=master
+    :target: https://travis-ci.org/radhermit/vimball
+.. |coverage| image:: https://coveralls.io/repos/radhermit/vimball/badge.png?branch=master
+    :target: https://coveralls.io/r/radhermit/vimball?branch=master
