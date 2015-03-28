@@ -29,12 +29,9 @@ def is_vimball(fd):
 
 
 class Vimball:
-    def __init__(self, filepath, extractdir=None, verbose=False):
+    def __init__(self, filepath):
         if not os.path.exists(filepath):
             raise SystemExit("vimball archive doesn't exist: {}".format(filepath))
-
-        self.filepath = filepath
-        self.verbose = verbose
 
         filebase, extension = os.path.splitext(filepath)
         if extension == ".gz":
@@ -48,13 +45,6 @@ class Vimball:
 
         if not is_vimball(self.fd):
             raise SystemExit('Invalid vimball archive format')
-
-        if extractdir is None:
-            extractdir = os.path.basename(filebase)
-            if os.path.exists(extractdir):
-                tempdir = tempfile.mkdtemp(prefix='vimball-', dir=os.getcwd())
-                extractdir = os.path.join(tempdir.split('/')[-1], extractdir)
-        self.extractdir = extractdir
 
     def __del__(self):
         try:
@@ -84,17 +74,23 @@ class Vimball:
             if filename is not None:
                 break
 
-    def extract(self):
+    def extract(self, extractdir=None, verbose=False):
+        if extractdir is None:
+            extractdir = os.path.basename(filebase)
+            if os.path.exists(extractdir):
+                tempdir = tempfile.mkdtemp(prefix='vimball-', dir=os.getcwd())
+                extractdir = os.path.join(tempdir.split('/')[-1], extractdir)
+
         self.fd.seek(0)
         for filename, lines, offset in self.files:
-            filepath = os.path.join(self.extractdir, filename)
+            filepath = os.path.join(extractdir, filename)
             try:
                 directory = os.path.dirname(filepath)
                 mkdir_p(directory)
             except OSError:
                 raise SystemExit('Failed creating directory: {}'.format(directory))
             with open(filepath, 'w') as f:
-                if self.verbose:
+                if verbose:
                     print(filepath)
                 self.fd.seek(offset)
                 for i in range(lines):
@@ -117,10 +113,10 @@ def main():
         help='list files a vimball archive')
 
     args = parser.parse_args()
-    vimball = Vimball(args.archive[0], args.extractdir, args.verbose)
+    vimball = Vimball(args.archive[0])
 
     if args.extract:
-        vimball.extract()
+        vimball.extract(args.extractdir, args.verbose)
     elif args.list:
         for filename, _lines, _offset in vimball.files:
             print(filename)
