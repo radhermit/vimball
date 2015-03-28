@@ -1,6 +1,7 @@
 import argparse
 import bz2
 import gzip
+import lzma
 import os
 import re
 import sys
@@ -22,6 +23,8 @@ class Vimball:
                 self._file = gzip.open(filepath)
             elif extension == ".bz2":
                 self._file = bz2.BZ2File(filepath)
+            elif extension == ".xz":
+                self._file = lzma.open(filepath)
             else:
                 self._file = open(filepath)
         except IOError:
