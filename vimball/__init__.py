@@ -14,23 +14,23 @@ from vimball.utils import mkdir_p
 
 class Vimball:
     def __init__(self, filepath, extractdir=None, verbose=False):
+        if not os.path.exists(filepath):
+            raise SystemExit("vimball archive doesn't exist: {}".format(filepath))
+
         self.filepath = filepath
         self.verbose = verbose
 
         filebase, extension = os.path.splitext(filepath)
-        try:
-            if extension == ".gz":
-                self._file = gzip.open(filepath)
-            elif extension == ".bz2":
-                self._file = bz2.BZ2File(filepath)
-            elif extension == ".xz":
-                self._file = lzma.open(filepath)
-            else:
-                self._file = open(filepath)
-        except IOError:
-            raise SystemExit("That file doesn't exist!")
+        if extension == ".gz":
+            self._file = gzip.open(filepath)
+        elif extension == ".bz2":
+            self._file = bz2.BZ2File(filepath)
+        elif extension == ".xz":
+            self._file = lzma.open(filepath)
+        else:
+            self._file = open(filepath)
 
-        if not self._is_vimball():
+        if not self.is_vimball(self._file):
             raise SystemExit('Invalid vimball archive format')
 
         if extractdir is None:
@@ -46,15 +46,15 @@ class Vimball:
         except AttributeError:
             return
 
-    def _is_vimball(self):
-        self._file.seek(0)
-        header = self._file.readline()
+    @staticmethod
+    def is_vimball(fd):
+        fd.seek(0)
+        header = fd.readline()
         m = re.match('^" Vimball Archiver', header)
 
         if m is not None:
             return True
-        else:
-            return False
+        return False
 
     def _find_files(self, header):
         filename = None
