@@ -6,7 +6,7 @@ from unittest import mock
 from mock import patch
 from pytest import raises
 
-from vimball import Vimball, mkdir_p
+from vimball import Vimball, mkdir_p, is_vimball
 
 
 def test_mkdir_p():
@@ -39,6 +39,20 @@ def test_mkdir_p():
     with NamedTemporaryFile() as tmpfile:
         with raises(OSError):
             mkdir_p(tmpfile.name)
+
+
+def is_vimball():
+    # bad vimball archive
+    with NamedTemporaryFile() as tmpfile:
+        tmpfile.write(b'bad archive')
+        tmpfile.flush()
+        assert is_vimball(tmpfile.name) == False
+
+    # good vimball archive header
+    with NamedTemporaryFile() as tmpfile:
+        tmpfile.write('" Vimball Archiver')
+        tmpfile.flush()
+        assert is_vimball(tmpfile.name) == True
 
 
 def test_vimball():
