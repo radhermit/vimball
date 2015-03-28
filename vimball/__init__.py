@@ -52,12 +52,17 @@ def readline(fd):
     return line
 
 
+class ArchiveError(Exception):
+    """Catch-all archive error exception class."""
+    pass
+
+
 class Vimball:
     """Vimball archive format."""
 
     def __init__(self, filepath):
         if not os.path.exists(filepath):
-            raise SystemExit("vimball archive doesn't exist: {}".format(filepath))
+            raise ArchiveError("vimball archive doesn't exist: {}".format(filepath))
 
         self.filepath = filepath
         _filebase, extension = os.path.splitext(filepath)
@@ -74,7 +79,7 @@ class Vimball:
         self.fd.readline = partial(readline, self.fd)
 
         if not is_vimball(self.fd):
-            raise SystemExit('Invalid vimball archive format')
+            raise ArchiveError('Invalid vimball archive format')
 
     def __del__(self):
         try:
@@ -98,7 +103,7 @@ class Vimball:
                     try:
                         filelines = int(self.fd.readline().rstrip())
                     except ValueError:
-                        raise SystemExit('Invalid vimball archive format')
+                        raise ArchiveError('Invalid vimball archive format')
                     filestart = self.fd.tell()
                     yield (filename, filelines, filestart)
                 line = self.fd.readline()
@@ -123,7 +128,7 @@ class Vimball:
                 directory = os.path.dirname(filepath)
                 mkdir_p(directory)
             except OSError:
-                raise SystemExit('Failed creating directory: {}'.format(directory))
+                raise ArchiveError('Failed creating directory: {}'.format(directory))
             with open(filepath, 'w') as f:
                 if verbose:
                     print(filepath)
@@ -150,8 +155,11 @@ def main():
     args = parser.parse_args()
     vimball = Vimball(args.archive[0])
 
-    if args.extract:
-        vimball.extract(args.extractdir, args.verbose)
-    elif args.list:
-        for filename, _lines, _offset in vimball.files:
-            print(filename)
+    try:
+        if args.extract:
+            vimball.extract(args.extractdir, args.verbose)
+        elif args.list:
+            for filename, _lines, _offset in vimball.files:
+                print(filename)
+    except ArchiveError as e:
+        raise SystemExit(e)

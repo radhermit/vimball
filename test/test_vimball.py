@@ -6,7 +6,7 @@ from unittest import mock
 from mock import patch
 from pytest import raises
 
-from vimball import Vimball, mkdir_p, is_vimball
+from vimball import Vimball, mkdir_p, is_vimball, ArchiveError
 
 
 def test_mkdir_p():
@@ -57,13 +57,13 @@ def is_vimball():
 
 def test_vimball():
     # nonexistent archive
-    with raises(SystemExit):
+    with raises(ArchiveError):
         Vimball('nonexistent-archive.vba')
 
     # bad vimball archive
     with NamedTemporaryFile() as tmpfile:
         tmpfile.write(b'bad archive')
-        with raises(SystemExit):
+        with raises(ArchiveError):
             Vimball(tmpfile.name)
 
     # no files found in archive
