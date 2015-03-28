@@ -1,5 +1,6 @@
 import argparse
 import bz2
+import errno
 import gzip
 import lzma
 import os
@@ -8,7 +9,16 @@ import sys
 import tempfile
 
 from vimball._version import __version__
-from vimball.utils import mkdir_p
+
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as e:
+        if e.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
 
 def is_vimball(fd):
