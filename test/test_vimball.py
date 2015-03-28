@@ -46,13 +46,13 @@ def is_vimball():
     with NamedTemporaryFile() as tmpfile:
         tmpfile.write(b'bad archive')
         tmpfile.flush()
-        assert is_vimball(tmpfile.name) == False
+        assert not is_vimball(tmpfile.name)
 
     # good vimball archive header
     with NamedTemporaryFile() as tmpfile:
         tmpfile.write('" Vimball Archiver')
         tmpfile.flush()
-        assert is_vimball(tmpfile.name) == True
+        assert is_vimball(tmpfile.name)
 
 
 def test_vimball():
