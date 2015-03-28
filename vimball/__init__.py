@@ -1,6 +1,7 @@
 import argparse
 import bz2
 import errno
+from functools import partial
 import gzip
 import lzma
 import os
@@ -28,6 +29,13 @@ def is_vimball(fd):
     return False
 
 
+def readline(fd):
+    line = fd.__class__.readline(fd)
+    if isinstance(line, bytes):
+        line = line.decode()
+    return line
+
+
 class Vimball:
     def __init__(self, filepath):
         if not os.path.exists(filepath):
@@ -43,6 +51,9 @@ class Vimball:
             self.fd = lzma.open(filepath)
         else:
             self.fd = open(filepath)
+
+        # force readline() to always return str objects
+        self.fd.readline = partial(readline, self.fd)
 
         if not is_vimball(self.fd):
             raise SystemExit('Invalid vimball archive format')
