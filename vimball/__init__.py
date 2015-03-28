@@ -33,7 +33,13 @@ def is_vimball(fd):
     vimball archive header.
     """
     fd.seek(0)
-    if re.match('^" Vimball Archiver', fd.readline()) is not None:
+    try:
+        header = fd.readline()
+    except UnicodeDecodeError:
+        # binary files will raise exceptions when trying to decode raw bytes to
+        # str objects in our readline() wrapper
+        return False
+    if re.match('^" Vimball Archiver', header) is not None:
         return True
     return False
 
