@@ -84,10 +84,6 @@ class Vimball:
             if filename is not None:
                 break
 
-    def list(self):
-        for filename, _lines, _offset in self.files:
-            print(filename)
-
     def extract(self):
         self.fd.seek(0)
         for filename, lines, offset in self.files:
@@ -124,6 +120,7 @@ def main():
     vimball = Vimball(args.archive[0], args.extractdir, args.verbose)
 
     if args.extract:
-       vimball.extract()
+        vimball.extract()
     elif args.list:
-       vimball.list()
+        for filename, _lines, _offset in vimball.files:
+            print(filename)
