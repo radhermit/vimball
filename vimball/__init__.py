@@ -13,6 +13,10 @@ from vimball._version import __version__
 
 
 def mkdir_p(path):
+    """Create potentially nested directories as required.
+
+    Does nothing if the path already exists and is a directory.
+    """
     try:
         os.makedirs(path)
     except OSError as e:
@@ -23,6 +27,11 @@ def mkdir_p(path):
 
 
 def is_vimball(fd):
+    """Test for vimball archive format compliance.
+
+    Simple check to see if the first line of the file starts with standard
+    vimball archive header.
+    """
     fd.seek(0)
     if re.match('^" Vimball Archiver', fd.readline()) is not None:
         return True
@@ -30,6 +39,7 @@ def is_vimball(fd):
 
 
 def readline(fd):
+    """Readline wrapper to force readline() to return str objects."""
     line = fd.__class__.readline(fd)
     if isinstance(line, bytes):
         line = line.decode()
@@ -37,6 +47,8 @@ def readline(fd):
 
 
 class Vimball:
+    """Vimball archive format."""
+
     def __init__(self, filepath):
         if not os.path.exists(filepath):
             raise SystemExit("vimball archive doesn't exist: {}".format(filepath))
@@ -66,6 +78,7 @@ class Vimball:
 
     @property
     def files(self):
+        """Yields archive file information."""
         # try new file header format first, then fallback on old
         for header in (r"(.*)\t\[\[\[1\n", r"^(\d+)\n$"):
             header = re.compile(header)
@@ -87,6 +100,7 @@ class Vimball:
                 break
 
     def extract(self, extractdir=None, verbose=False):
+        """Extract archive files to a directory."""
         if extractdir is None:
             filebase, extension = os.path.splitext(self.filepath)
             if extension in ('.gz', '.bz2', '.xz'):
