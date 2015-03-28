@@ -33,7 +33,8 @@ class Vimball:
         if not os.path.exists(filepath):
             raise SystemExit("vimball archive doesn't exist: {}".format(filepath))
 
-        filebase, extension = os.path.splitext(filepath)
+        self.filepath = filepath
+        _filebase, extension = os.path.splitext(filepath)
         if extension == ".gz":
             self.fd = gzip.open(filepath)
         elif extension == ".bz2":
@@ -76,6 +77,7 @@ class Vimball:
 
     def extract(self, extractdir=None, verbose=False):
         if extractdir is None:
+            filebase, _extension = os.path.splitext(self.filepath)
             extractdir = os.path.basename(filebase)
             if os.path.exists(extractdir):
                 tempdir = tempfile.mkdtemp(prefix='vimball-', dir=os.getcwd())
