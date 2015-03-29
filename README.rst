@@ -4,7 +4,8 @@
 vimball
 =======
 
-vimball is a simple command-line tool for extracting vimball archives.
+vimball is a simple command-line tool for extracting vimball archives without
+using vim.
 
 For extracting vimball archives use the following command::
 
