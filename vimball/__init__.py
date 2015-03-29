@@ -153,9 +153,9 @@ def main():
         help='list files in a vimball archive')
 
     args = parser.parse_args()
-    vimball = Vimball(args.archive[0])
 
     try:
+        vimball = Vimball(args.archive[0])
         if args.extract:
             vimball.extract(args.extractdir, args.verbose)
         elif args.list:
