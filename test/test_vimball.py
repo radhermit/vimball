@@ -1,9 +1,8 @@
 import os
 import stat
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-from unittest import mock
+from unittest.mock import patch
 
-from mock import patch
 from pytest import raises
 
 from vimball import Vimball, mkdir_p, is_vimball, ArchiveError
