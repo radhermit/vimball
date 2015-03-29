@@ -137,6 +137,25 @@ class Vimball:
                 for i in range(lines):
                     f.write(self.fd.readline())
 
+    def create(self, pluginpath=None, force=False, verbose=False):
+        if pluginpath is None:
+            pluginpath = os.path.join(os.getcwd(), os.path.basename(self.filepath))
+        else:
+            if '/' not in pluginpath:
+                pluginpath = os.path.join(os.getcwd(), pluginpath)
+
+        if os.path.isdir(pluginpath):
+            raise ArchiveError('Vimball output path already exists: {}'.format(pluginpath))
+
+        try:
+            directory = os.path.dirname(pluginpath)
+            mkdir_p(directory)
+        except OSError as e:
+            raise ArchiveError('Failed creating directory "{}": '.format(
+                directory, os.strerror(e.errno))
+
+        if os.path.exists(pluginpath) and not force:
+            pluginpath = tempfile.mkstemp(prefix=os.path.basename(pluginpath), dir=os.path.dirname(pluginpath))
 
 def main():
     parser = argparse.ArgumentParser(description='vimball extractor', prog='vimball')
