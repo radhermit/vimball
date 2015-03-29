@@ -127,8 +127,9 @@ class Vimball:
             try:
                 directory = os.path.dirname(filepath)
                 mkdir_p(directory)
-            except OSError:
-                raise ArchiveError('Failed creating directory: {}'.format(directory))
+            except OSError as e:
+                raise ArchiveError('Failed creating directory "{}": '.format(
+                    directory, os.strerror(e.errno))
             with open(filepath, 'w') as f:
                 if verbose:
                     print(filepath)
