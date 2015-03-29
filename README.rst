@@ -1,4 +1,4 @@
-|test| |coverage|
+|pypi| |test| |coverage|
 
 =======
 vimball
@@ -21,6 +21,8 @@ Listing the files contained inside the vimball archive is also supported using::
     vimball -l <vimball archive>
 
 
+.. |pypi| image:: https://img.shields.io/pypi/v/vimball.svg
+    :target: https://pypi.python.org/pypi/vimball
 .. |test| image:: https://travis-ci.org/radhermit/vimball.svg?branch=master
     :target: https://travis-ci.org/radhermit/vimball
 .. |coverage| image:: https://coveralls.io/repos/radhermit/vimball/badge.png?branch=master
