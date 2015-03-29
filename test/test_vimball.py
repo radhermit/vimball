@@ -1,5 +1,7 @@
 import os
+import random
 import stat
+import string
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from unittest import mock
 
@@ -7,6 +9,32 @@ from mock import patch
 from pytest import raises
 
 from vimball import Vimball, mkdir_p, is_vimball, ArchiveError
+
+
+class TemporaryVimPlugin(TemporaryDirectory):
+    """Create and return a temporary vim plugin populated with random data."""
+
+    def __init__(self, name):
+        super(TemporaryVimPlugin, self).__init__(prefix=name)
+        for i in range(self.dirs):
+            dirpath = os.path.join(self.name, str(i))
+            os.mkdir(dirpath)
+            for j in range(random.randrange(5)):
+                filepath = os.path.join(dirpath, str(j))
+                with open(filepath, 'w+') as f:
+                    for _ in range(random.randrange(100)):
+                        line = ''.join(random.choice(
+                            string.ascii_uppercase + string.digits) for _ in range(79))
+                        f.write(line + '\n')
+
+
+class TemporaryVimball(NamedTemporaryFile):
+    """Create and return a temporary vimball archive."""
+
+    def __init__(self, name):
+        super(TemporaryVimball, self).__init__(prefix=name)
+        with TemporaryVimPlugin(name) as plugin:
+            Vimball(plugin).create(self.name)
 
 
 def test_mkdir_p():
