@@ -1,11 +1,17 @@
 language: python
-python: 3.3
-env:
-    - TOXENV=py33
-    - TOXENV=py34
-install:
-    - pip install tox coveralls
-    - python setup.py install
+python:
+    - 3.3
+    - 3.4
+    - nightly
+matrix:
+  fast_finish: true
+  allow_failures:
+    - python: nightly
+sudo: false
+cache:
+  directories:
+    - $HOME/.cache/pip
+install: pip install 'tox<2' 'coveralls>=0.5'
 script: tox -e travis
 after_success:
     # upload coverage data
