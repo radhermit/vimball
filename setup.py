@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+from io import open
 import os
+import re
 import subprocess
 import sys
 
@@ -30,16 +32,20 @@ class PyTest(RunCommand):
         raise SystemExit(errno)
 
 
-# workaround to get version without importing anything
-with open('vimball/_version.py') as f:
-    exec(f.read())
+version = ''
+with open('vimball/__init__.py', 'r', encoding='utf-8') as f:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        f.read(), re.MULTILINE).group(1)
 
-with open('README.rst', 'r') as f:
+if not version:
+    raise RuntimeError('Cannot find version')
+
+with open('README.rst', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 setup(
     name='vimball',
-    version=__version__,
+    version=version,
     description='a command-line vimball archive extractor',
     long_description=readme,
     author='Tim Harder',
@@ -47,7 +53,7 @@ setup(
     url='https://github.com/radhermit/vimball',
     license='MIT',
     packages=['vimball'],
-    entry_points={'console_scripts': ['vimball = vimball:main']},
+    entry_points={'console_scripts': ['vimball = vimball.cli:main']},
     tests_require=['pytest'],
     cmdclass={'test': PyTest},
     platforms='Posix',
