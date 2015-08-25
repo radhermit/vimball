@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from pytest import raises
 
-from vimball.cli import Vimball, mkdir_p, is_vimball, ArchiveError
+from vimball.base import Vimball, mkdir_p, is_vimball, ArchiveError
 
 
 def test_mkdir_p():
