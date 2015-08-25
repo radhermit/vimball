@@ -2,11 +2,11 @@ language: python
 python:
     - 3.3
     - 3.4
-    - nightly
+    - 3.5-dev
 matrix:
   fast_finish: true
   allow_failures:
-    - python: nightly
+    - python: 3.5-dev
 sudo: false
 cache:
   directories:
