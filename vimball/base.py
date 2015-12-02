@@ -5,6 +5,7 @@ import lzma
 import os
 import re
 import tempfile
+import textwrap
 
 
 def mkdir_p(path):
@@ -44,23 +45,52 @@ class ArchiveError(Exception):
     pass
 
 
+class Readdir(object):
+    """Iterator of strings from all files in a directory."""
+
+    def __init__(self, path):
+        if not os.path.isdir(path):
+            raise ValueError('path is not a directory: {}'.format(path))
+        self.path = path
+
+    def readline(self):
+        for path, dirs, files in os.walk(self.path):
+            for filepath in files:
+                with open(filepath) as f:
+                    yield f.readline()
+
+
 class Vimball(object):
     """Vimball archive format."""
 
-    def __init__(self, path):
-        if not os.path.exists(path):
-            raise ArchiveError("path doesn't exist: '{}'".format(path))
-
+    def __init__(self, path, create=False):
         self.path = path
-        _filebase, ext = os.path.splitext(path)
-        if ext == ".gz":
-            self.fd = gzip.open(path)
-        elif ext == ".bz2":
-            self.fd = bz2.BZ2File(path)
-        elif ext == ".xz":
-            self.fd = lzma.open(path)
-        else:
+
+        if create:
+            if os.path.exists(path):
+                raise ArchiveError("path exists: '{}'".format(path))
+
+            # add our own header
+            with open(path) as f:
+                f.write(textwrap.dedent('''\
+                    Vimball Archiver by radhermit (https://pypi.python.org/pypi/vimball)
+                    UseVimball
+                    finish
+                    '''.strip()))
             self.fd = open(path)
+        else:
+            if not os.path.exists(path):
+                raise ArchiveError("path doesn't exist: '{}'".format(path))
+
+            _filebase, ext = os.path.splitext(path)
+            if ext == ".gz":
+                self.fd = gzip.open(path)
+            elif ext == ".bz2":
+                self.fd = bz2.BZ2File(path)
+            elif ext == ".xz":
+                self.fd = lzma.open(path)
+            else:
+                self.fd = open(path)
 
         if not is_vimball(self.fd):
             raise ArchiveError('invalid archive format')
@@ -100,6 +130,9 @@ class Vimball(object):
                 line = self.readline()
             if filename is not None:
                 break
+
+    def create(self, extractdir=None, verbose=False):
+        pass
 
     def extract(self, extractdir=None, verbose=False):
         """Extract archive files to a directory."""
