@@ -37,4 +37,4 @@ def main(args=None):
             for filename, _lines, _offset in vimball.files:
                 print(filename)
     except ArchiveError as e:
-        raise SystemExit('vimball: error: %s' % e)
+        raise SystemExit('vimball: error: {}'.format(e))
