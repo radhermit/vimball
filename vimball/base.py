@@ -44,7 +44,7 @@ class ArchiveError(Exception):
     pass
 
 
-class Vimball:
+class Vimball(object):
     """Vimball archive format."""
 
     def __init__(self, path):
