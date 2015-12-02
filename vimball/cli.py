@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from vimball.base import Vimball, ArchiveError
 
