@@ -47,20 +47,20 @@ class ArchiveError(Exception):
 class Vimball:
     """Vimball archive format."""
 
-    def __init__(self, filepath):
-        if not os.path.exists(filepath):
-            raise ArchiveError("path doesn't exist: '{}'".format(filepath))
+    def __init__(self, path):
+        if not os.path.exists(path):
+            raise ArchiveError("path doesn't exist: '{}'".format(path))
 
-        self.filepath = filepath
-        _filebase, extension = os.path.splitext(filepath)
-        if extension == ".gz":
-            self.fd = gzip.open(filepath)
-        elif extension == ".bz2":
-            self.fd = bz2.BZ2File(filepath)
-        elif extension == ".xz":
-            self.fd = lzma.open(filepath)
+        self.path = path
+        _filebase, ext = os.path.splitext(path)
+        if ext == ".gz":
+            self.fd = gzip.open(path)
+        elif ext == ".bz2":
+            self.fd = bz2.BZ2File(path)
+        elif ext == ".xz":
+            self.fd = lzma.open(path)
         else:
-            self.fd = open(filepath)
+            self.fd = open(path)
 
         if not is_vimball(self.fd):
             raise ArchiveError('invalid archive format')
@@ -104,9 +104,9 @@ class Vimball:
     def extract(self, extractdir=None, verbose=False):
         """Extract archive files to a directory."""
         if extractdir is None:
-            filebase, extension = os.path.splitext(self.filepath)
-            if extension in ('.gz', '.bz2', '.xz'):
-                filebase, _extension = os.path.splitext(filebase)
+            filebase, ext = os.path.splitext(self.path)
+            if ext in ('.gz', '.bz2', '.xz'):
+                filebase, _ext = os.path.splitext(filebase)
             extractdir = os.path.basename(filebase)
             if os.path.exists(extractdir):
                 tempdir = tempfile.mkdtemp(prefix='vimball-', dir=os.getcwd())

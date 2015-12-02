@@ -6,7 +6,7 @@ from vimball.base import Vimball, ArchiveError
 
 argparser = argparse.ArgumentParser(description='vimball extractor', prog='vimball')
 
-argparser.add_argument('archive', nargs=1)
+argparser.add_argument('path', nargs=1)
 argparser.add_argument('-v', '--verbose', action='store_true',
     help='show files names when extracting an archive')
 argparser.add_argument('-C', '--directory', metavar='DIR', dest='extractdir',
@@ -21,6 +21,7 @@ actions.add_argument('-l', '--list', action='store_true',
 
 def parse_args(args):
     opts = argparser.parse_args(args)
+    opts.path = opts.path[0]
     return opts
 
 
@@ -29,7 +30,7 @@ def main(args=None):
     opts = parse_args(args)
 
     try:
-        vimball = Vimball(opts.archive[0])
+        vimball = Vimball(opts.path)
         if opts.extract:
             vimball.extract(opts.extractdir, opts.verbose)
         elif opts.list:
