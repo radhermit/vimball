@@ -49,7 +49,7 @@ class Vimball:
 
     def __init__(self, filepath):
         if not os.path.exists(filepath):
-            raise ArchiveError("vimball archive doesn't exist: {}".format(filepath))
+            raise ArchiveError("path doesn't exist: '{}'".format(filepath))
 
         self.filepath = filepath
         _filebase, extension = os.path.splitext(filepath)
@@ -63,7 +63,7 @@ class Vimball:
             self.fd = open(filepath)
 
         if not is_vimball(self.fd):
-            raise ArchiveError('Invalid vimball archive format')
+            raise ArchiveError('invalid archive format')
 
     def __del__(self):
         try:
@@ -94,7 +94,7 @@ class Vimball:
                     try:
                         filelines = int(self.readline().rstrip())
                     except ValueError:
-                        raise ArchiveError('Invalid vimball archive format')
+                        raise ArchiveError('invalid archive format')
                     filestart = self.fd.tell()
                     yield (filename, filelines, filestart)
                 line = self.readline()
@@ -119,7 +119,7 @@ class Vimball:
                 directory = os.path.dirname(filepath)
                 mkdir_p(directory)
             except OSError as e:
-                raise ArchiveError('Failed creating directory "{}": {}'.format(
+                raise ArchiveError("failed creating directory '{}': {}".format(
                     directory, os.strerror(e.errno)))
             with open(filepath, 'w') as f:
                 if verbose:
