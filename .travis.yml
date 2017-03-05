@@ -1,14 +1,16 @@
 language: python
 python:
-    - 3.4
-    - 3.5
-    - 3.6
+  - 3.4
+  - 3.5
+  - 3.6
 sudo: false
 cache:
   directories:
     - $HOME/.cache/pip
-install: pip install tox coveralls
+install:
+  - pip install --upgrade pip
+  - pip install tox coveralls
 script: tox -e travis
 after_success:
-    # upload coverage data
-    - coveralls
+  # upload coverage data
+  - coveralls
