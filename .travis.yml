@@ -1,11 +1,11 @@
+dist: xenial
 language: python
 python:
   - 3.6
   - 3.7
 sudo: false
 cache:
-  directories:
-    - $HOME/.cache/pip
+  pip: true
 install:
   - pip install --upgrade pip
   - pip install tox coveralls
