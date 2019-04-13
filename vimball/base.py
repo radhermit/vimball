@@ -49,7 +49,7 @@ class Vimball(object):
 
     def __init__(self, path):
         if not os.path.exists(path):
-            raise ArchiveError("path doesn't exist: '{}'".format(path))
+            raise ArchiveError(f"path doesn't exist: {path!r}")
 
         self.path = path
         _filebase, ext = os.path.splitext(path)
@@ -119,8 +119,7 @@ class Vimball(object):
                 directory = os.path.dirname(filepath)
                 mkdir_p(directory)
             except OSError as e:
-                raise ArchiveError("failed creating directory '{}': {}".format(
-                    directory, os.strerror(e.errno)))
+                raise ArchiveError(f"failed creating directory {directory!r}: {e.strerror}")
             with open(filepath, 'w') as f:
                 if verbose:
                     print(filepath)
