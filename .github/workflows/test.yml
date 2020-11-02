@@ -41,7 +41,6 @@ jobs:
 
     - name: Report code coverage
       run: |
-        coverage combine
         coverage report
         coverage xml
 
